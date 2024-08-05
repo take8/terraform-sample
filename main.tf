@@ -2,14 +2,16 @@
 resource "aws_key_pair" "administrator" {
   key_name   = "sd-staging-administrator"
   public_key = "ssh-rsa SOMETHINGHRE administrator@sd.local"
-  tags       = local.tags
+
+  tags = local.tags
 }
 
 # SSHログインのためのセキュリティグループを登録
 resource "aws_security_group" "ssh" {
   name   = "sd-staging-ssh"
   vpc_id = "vpc-0fca7c8fbb8d07c5b"
-  tags   = local.tags
+
+  tags = local.tags
 }
 resource "aws_security_group_rule" "ssh_egress" {
   security_group_id = aws_security_group.ssh.id
@@ -40,6 +42,7 @@ resource "aws_instance" "web_1" {
     volume_type = "gp3"
     volume_size = "20"
   }
+
   tags = local.tags
 }
 resource "aws_instance" "web_2" {
@@ -53,6 +56,7 @@ resource "aws_instance" "web_2" {
     volume_type = "gp3"
     volume_size = "20"
   }
+
   tags = local.tags
 }
 
@@ -60,12 +64,14 @@ resource "aws_instance" "web_2" {
 resource "aws_eip" "web_1" {
   instance = aws_instance.web_1.id
   domain   = "vpc"
-  tags     = local.tags
+
+  tags = local.tags
 }
 resource "aws_eip" "web_2" {
   instance = aws_instance.web_2.id
   domain   = "vpc"
-  tags     = local.tags
+
+  tags = local.tags
 }
 
 locals {
