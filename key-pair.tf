@@ -16,9 +16,9 @@ resource "tls_private_key" "keygen" {
 }
 
 # local_fileのリソースを指定するとterraformを実行するディレクトリ内でファイル作成やコマンド実行が可能
-resource "local_file" "private_key_pem" {
+resource "local_file" "private_key_openssh" {
   filename = local.private_key_file
-  content  = tls_private_key.keygen.private_key_pem
+  content  = tls_private_key.keygen.private_key_openssh
   provisioner "local-exec" {
     command = "chmod 600 ${local.private_key_file}"
   }
