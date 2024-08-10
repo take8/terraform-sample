@@ -45,8 +45,8 @@ resource "aws_route_table_association" "public" {
 
 # SSHログインのための公開鍵を登録
 resource "aws_key_pair" "administrator" {
-  key_name   = "sd-staging-administrator"
-  public_key = "ssh-rsa SOMETHINGHRE administrator@sd.local"
+  key_name   = var.key_name
+  public_key = tls_private_key.keygen.public_key_openssh
 
   tags = local.tags
 }
