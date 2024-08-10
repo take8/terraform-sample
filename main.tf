@@ -69,10 +69,11 @@ resource "aws_security_group_rule" "ssh_egress" {
 resource "aws_security_group_rule" "ssh_ingress" {
   security_group_id = aws_security_group.ssh.id
   type              = "ingress"
-  cidr_blocks       = ["153.240.3.128/32", "52.194.115.181/32", "52.198.25.184/32", "52.197.224.235/32"]
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
+  # cidr_blocks       = ["153.240.3.128/32", "52.194.115.181/32", "52.198.25.184/32", "52.197.224.235/32"]
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
 }
 
 # Webサーバーとして2台のインスタンスを構築
