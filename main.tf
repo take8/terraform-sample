@@ -1,3 +1,26 @@
+resource "aws_vpc" "sd_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+}
+
+resource "aws_subnet" "sd_subnet_a" {
+  vpc_id                  = aws_vpc.sd_vpc.id
+  cidr_block              = "10.0.0.0/24"
+  availability_zone       = "ap-northeast-1a"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "sd_subnet_c" {
+  vpc_id                  = aws_vpc.sd_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-northeast-1c"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_internet_gateway" "sd_igw" {
+  vpc_id = aws_vpc.sd_vpc.id
+}
+
 # SSHログインのための公開鍵を登録
 resource "aws_key_pair" "administrator" {
   key_name   = "sd-staging-administrator"
@@ -9,7 +32,7 @@ resource "aws_key_pair" "administrator" {
 # SSHログインのためのセキュリティグループを登録
 resource "aws_security_group" "ssh" {
   name   = "sd-staging-ssh"
-  vpc_id = "vpc-0fca7c8fbb8d07c5b"
+  vpc_id = aws_vpc.sd_vpc.id
 
   tags = local.tags
 }
@@ -36,7 +59,7 @@ resource "aws_instance" "web_1" {
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.administrator.key_name
   vpc_security_group_ids = [aws_security_group.ssh.id]
-  subnet_id              = "subnet-05a36e44b59902960"
+  subnet_id              = aws_subnet.sd_subnet_a.id
   monitoring             = true
   root_block_device {
     volume_type = "gp3"
@@ -50,7 +73,7 @@ resource "aws_instance" "web_2" {
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.administrator.key_name
   vpc_security_group_ids = [aws_security_group.ssh.id]
-  subnet_id              = "subnet-038fecec7ae366e20"
+  subnet_id              = aws_subnet.sd_subnet_c.id
   monitoring             = true
   root_block_device {
     volume_type = "gp3"
