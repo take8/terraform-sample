@@ -21,6 +21,28 @@ resource "aws_internet_gateway" "sd_igw" {
   vpc_id = aws_vpc.sd_vpc.id
 }
 
+# ルートテーブル
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.sd_vpc.id
+
+  # tags = {
+  #   Name = var.resource_name
+  # }
+}
+
+# ルートテーブルのエントリ
+resource "aws_route" "public" {
+  route_table_id         = aws_route_table.public.id
+  gateway_id             = aws_internet_gateway.sd_igw.id
+  destination_cidr_block = "0.0.0.0/0"
+}
+
+# サブネットとルートテーブルの関連付け
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.sd_subnet_a.id
+  route_table_id = aws_route_table.public.id
+}
+
 # SSHログインのための公開鍵を登録
 resource "aws_key_pair" "administrator" {
   key_name   = "sd-staging-administrator"
