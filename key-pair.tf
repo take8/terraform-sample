@@ -1,13 +1,11 @@
-variable "key_name" {
-  type        = string
-  description = "sd-staging-administrator"
-  default     = "hoge-key"
+locals {
+  key_name = format("%s-%s-administrator", var.project_name, var.environment)
 }
 
 # 作成したキーペアを格納するファイルを指定
 locals {
-  public_key_file  = "./.key_pair/${var.key_name}.id_rsa.pub"
-  private_key_file = "./.key_pair/${var.key_name}.id_rsa"
+  public_key_file  = "./.key_pair/${local.key_name}.id_rsa.pub"
+  private_key_file = "./.key_pair/${local.key_name}.id_rsa"
 }
 
 # privateキーのアルゴリズム

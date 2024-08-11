@@ -45,7 +45,7 @@ resource "aws_route_table_association" "public" {
 
 # SSHログインのための公開鍵を登録
 resource "aws_key_pair" "administrator" {
-  key_name   = var.key_name
+  key_name   = local.key_name
   public_key = tls_private_key.keygen.public_key_openssh
 
   tags = local.tags
