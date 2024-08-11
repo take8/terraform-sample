@@ -1,5 +1,6 @@
 locals {
-  key_name = format("%s-%s-administrator", var.project_name, var.environment)
+  # key_name = format("%s-%s-administrator", var.project_name, var.environment)
+  key_name = format("%s-%s-administrator", var.project_name, terraform.workspace)
 }
 
 # 作成したキーペアを格納するファイルを指定

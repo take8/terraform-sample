@@ -8,7 +8,8 @@ resource "aws_key_pair" "administrator" {
 
 # SSHログインのためのセキュリティグループを登録
 resource "aws_security_group" "ssh" {
-  name   = format("%s-%s-ssh", var.project_name, var.environment)
+  # name   = format("%s-%s-ssh", var.project_name, var.environment)
+  name   = format("%s-%s-ssh", var.project_name, terraform.workspace)
   vpc_id = aws_vpc.sd_vpc.id
 
   tags = local.tags
@@ -63,8 +64,9 @@ resource "aws_eip" "web" {
 
 locals {
   tags = {
-    "project"     = var.project_name
-    "environment" = var.environment
+    "project" = var.project_name
+    # "environment" = var.environment
+    "environment" = terraform.workspace
     "terraform"   = true
   }
 }
