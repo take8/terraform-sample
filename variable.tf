@@ -7,8 +7,20 @@ variable "environment" {
   default = "staging"
 }
 
-variable "allowed_ips" {
-  default = ["153.240.3.128/32", "52.194.115.181/32", "52.198.25.184/32", "52.197.224.235/32"]
+variable "office_ips" {
+  type = map(string)
+  default = {
+    "tokyo" = "153.240.3.128/32"
+    "osaka" = "52.194.115.181/32"
+  }
+}
+
+variable "vpn_ips" {
+  type = map(string)
+  default = {
+    "tokyo" = "52.198.25.184/32"
+    "osaka" = "52.197.224.235/32"
+  }
 }
 
 variable "instance_type" {
