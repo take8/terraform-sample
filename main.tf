@@ -77,27 +77,16 @@ resource "aws_security_group_rule" "ssh_ingress" {
 }
 
 # Webサーバーとして2台のインスタンスを構築
-resource "aws_instance" "web_1" {
-  ami                    = "ami-0b9593848b0f1934e" # AL2023 x86
-  instance_type          = "t2.micro"
-  key_name               = aws_key_pair.administrator.key_name
-  vpc_security_group_ids = [aws_security_group.ssh.id]
-  subnet_id              = aws_subnet.sd_subnet_a.id
-  monitoring             = true
-  root_block_device {
-    volume_type = "gp3"
-    volume_size = "20"
-  }
+resource "aws_instance" "web" {
+  count = 2
 
-  tags = local.tags
-}
-resource "aws_instance" "web_2" {
   ami                    = "ami-0b9593848b0f1934e" # AL2023 x86
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.administrator.key_name
   vpc_security_group_ids = [aws_security_group.ssh.id]
-  subnet_id              = aws_subnet.sd_subnet_c.id
+  subnet_id              = element([aws_subnet.sd_subnet_a.id, aws_subnet.sd_subnet_c.id], count.index)
   monitoring             = true
+
   root_block_device {
     volume_type = "gp3"
     volume_size = "20"
@@ -107,14 +96,10 @@ resource "aws_instance" "web_2" {
 }
 
 # それぞれのEC2インスタンスにEIPを設定
-resource "aws_eip" "web_1" {
-  instance = aws_instance.web_1.id
-  domain   = "vpc"
+resource "aws_eip" "web" {
+  count = 2
 
-  tags = local.tags
-}
-resource "aws_eip" "web_2" {
-  instance = aws_instance.web_2.id
+  instance = element(aws_instance.web.*.id, count.index)
   domain   = "vpc"
 
   tags = local.tags
