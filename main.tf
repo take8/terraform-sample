@@ -35,7 +35,8 @@ resource "aws_security_group_rule" "ssh_ingress" {
 resource "aws_instance" "web" {
   count = 2
 
-  ami                    = "ami-0b9593848b0f1934e" # AL2023 x86
+  # ami                    = "ami-0b9593848b0f1934e" # AL2023 x86
+  ami                    = data.aws_ami.amazon_linux_2023.image_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.administrator.key_name
   vpc_security_group_ids = [aws_security_group.ssh.id]
@@ -66,4 +67,48 @@ locals {
     "environment" = var.environment
     "terraform"   = true
   }
+}
+
+# Amazon Linux 2023 AMIの取得
+# data "aws_ami" "amazon_linux_2023" {
+#   most_recent = true
+#   owners      = ["amazon"]
+
+#   filter {
+#     name   = "name"
+#     values = ["al2023-ami-*-kernel-*-x86_64"]
+#   }
+# }
+
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
+output "eip_1" {
+  value = aws_eip.web[0].public_ip
+}
+
+output "eip_2" {
+  value = aws_eip.web[1].public_ip
+}
+
+# sshコマンドを出力
+output "ssh_command" {
+  value = "ssh -i ${local.private_key_file} ec2-user@${aws_eip.web[0].public_ip}"
 }

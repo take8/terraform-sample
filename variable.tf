@@ -30,5 +30,5 @@ variable "root_volume_type" {
   default = "gp3"
 }
 variable "root_volume_size" {
-  default = "20"
+  default = "30"
 }
