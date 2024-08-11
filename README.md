@@ -19,6 +19,16 @@ AWSでユーザーを作成
 aws s3api create-bucket --bucket TFSTATE_BUCKET_NAME --region ap-northeast-1 --create-bucket-configuration LocationConstraint=ap-northeast-1
 ```
 
+## ワークスペースの切り替え
+
+```sh
+# 一覧
+terraform workspace list
+
+# 切り替え
+terraform workspace select ${ENVIRONMENT}
+```
+
 ## フォーマット
 
 ```sh
