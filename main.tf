@@ -32,6 +32,15 @@ resource "aws_security_group_rule" "ssh_ingress" {
   protocol    = "tcp"
 }
 
+resource "aws_security_group_rule" "http_ingress" {
+  security_group_id = aws_security_group.ssh.id
+  type              = "ingress"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+}
+
 # Webサーバーとして2台のインスタンスを構築
 resource "aws_instance" "web" {
   count = 2
@@ -48,6 +57,15 @@ resource "aws_instance" "web" {
     volume_type = var.root_volume_type
     volume_size = var.root_volume_size
   }
+
+  user_data = <<EOF
+#!/bin/bash
+dnf update -y
+dnf install -y httpd
+uname -n > /var/www/html/index.html
+systemctl start httpd
+systemctl enable httpd
+EOF
 
   tags = local.tags
 }
@@ -113,4 +131,8 @@ output "eip_2" {
 # sshコマンドを出力
 output "ssh_command" {
   value = "ssh -i ${local.private_key_file} ec2-user@${aws_eip.web[0].public_ip}"
+}
+
+output "ec2_host" {
+  value = aws_instance.web.*.public_dns
 }
